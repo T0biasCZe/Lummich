@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Files>
+  <XAPFiles>
+    <File>resources.pri</File>
+    <File>Lummich.dll</File>
+    <File>cs-CZ\Lummich.resources.dll</File>
+    <File>cs\Lummich.resources.dll</File>
+    <File>sk-SK\Lummich.resources.dll</File>
+    <File>sk\Lummich.resources.dll</File>
+    <File>cs-CZ\Microsoft.Phone.Controls.Toolkit.resources.dll</File>
+    <File>sk-SK\Microsoft.Phone.Controls.Toolkit.resources.dll</File>
+    <File>Assets\Human.png</File>
+    <File>Assets\imagerror.png</File>
+    <File>Assets\info.ico</File>
+    <File>Assets\Language\cs.txt</File>
+    <File>Assets\Language\en.txt</File>
+    <File>Assets\Language\maps.txt</File>
+    <File>Assets\Language\sk.txt</File>
+    <File>Assets\network.ico</File>
+    <File>Assets\PanoramaBackgroundCloudDarkScaled.jpg</File>
+    <File>Assets\star.ico</File>
+    <File>Assets\testimages\aero.jpg</File>
+    <File>Assets\testimages\Belogradchik Rocks, Bulgaria.jpg</File>
+    <File>Assets\testimages\DSCF4317-3.jpg</File>
+    <File>Assets\testimages\El Capitan and valley reflected on Merced river, Yosemite National Park, California, USA.jpg</File>
+    <File>Assets\testimages\hffclmsu4paf1.jpg</File>
+    <File>Assets\testimages\overcrowded-bus-on-a-dusty-road-in-the-mountains-leogane-haiti-E7A77A.jpg</File>
+    <File>Assets\testimages\P1400426_2.jpg</File>
+    <File>Assets\testimages\PXL_20250928_225912513.jpg</File>
+    <File>Assets\testimages\P_20250715_165311.jpg</File>
+    <File>Assets\testimages\sukafon.jpg</File>
+    <File>Assets\no.png</File>
+    <File>Assets\trash.ico</File>
+    <File>Assets\yes.png</File>
+    <File>Assets\AlignmentGrid.png</File>
+    <File>Assets\BadgeLogo.png</File>
+    <File>Assets\Logo.png</File>
+    <File>Assets\SplashScreen.png</File>
+    <File>Assets\SquareTile150x150.png</File>
+    <File>Assets\SquareTile71x71.png</File>
+    <File>Assets\StoreLogo.png</File>
+    <File>Assets\WideLogo.png</File>
+    <File>Assets\Tiles\FlipCycleTileLarge.png</File>
+    <File>Assets\Tiles\FlipCycleTileSmall.png</File>
+    <File>Assets\Tiles\IconicTileMediumLarge.png</File>
+    <File>Assets\Tiles\IconicTileSmall.png</File>
+    <File>README_FIRST.txt</File>
+    <File>Toolkit.Content\ApplicationBar.Add.png</File>
+    <File>Toolkit.Content\ApplicationBar.Cancel.png</File>
+    <File>Toolkit.Content\ApplicationBar.Check.png</File>
+    <File>Toolkit.Content\ApplicationBar.Delete.png</File>
+    <File>Toolkit.Content\ApplicationBar.Select.png</File>
+    <File>AppManifest.xaml</File>
+    <File>Assets\ApplicationIcon.png</File>
+    <File>Assets\Tiles\FlipCycleTileMedium.png</File>
+    <File>Microsoft.Phone.Controls.Toolkit.dll</File>
+    <File>Newtonsoft.Json.dll</File>
+    <File>System.ComponentModel.Primitives.dll</File>
+    <File>System.ComponentModel.TypeConverter.dll</File>
+    <File>Newtonsoft.Json.xml</File>
+    <File>WMAppManifest.xml</File>
+    <File>AppxManifest.xml</File>
+  </XAPFiles>
+  <APPXFiles />
+</Files>

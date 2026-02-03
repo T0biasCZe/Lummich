@@ -1,0 +1,15 @@
+﻿<Deployment xmlns="http://schemas.microsoft.com/client/2007/deployment" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" EntryPointAssembly="Lummich" EntryPointType="Lummich.App" RuntimeVersion="6.7.50308.0">
+  <Deployment.Parts>
+    <AssemblyPart x:Name="Lummich" Source="Lummich.dll" />
+    <AssemblyPart x:Name="Microsoft.Phone.Controls.Toolkit" Source="Microsoft.Phone.Controls.Toolkit.dll" />
+    <AssemblyPart x:Name="Newtonsoft.Json" Source="Newtonsoft.Json.dll" />
+    <AssemblyPart x:Name="System.ComponentModel.Primitives" Source="System.ComponentModel.Primitives.dll" />
+    <AssemblyPart x:Name="System.ComponentModel.TypeConverter" Source="System.ComponentModel.TypeConverter.dll" />
+    <AssemblyPart Source="cs-CZ/Lummich.resources.dll" />
+    <AssemblyPart Source="cs/Lummich.resources.dll" />
+    <AssemblyPart Source="sk-SK/Lummich.resources.dll" />
+    <AssemblyPart Source="sk/Lummich.resources.dll" />
+    <AssemblyPart Source="cs-CZ/Microsoft.Phone.Controls.Toolkit.resources.dll" />
+    <AssemblyPart Source="sk-SK/Microsoft.Phone.Controls.Toolkit.resources.dll" />
+  </Deployment.Parts>
+</Deployment>
