@@ -1,0 +1,5 @@
+ShareButtonText=Share
+FavoriteButtonText=Favorite
+InfoButtonText=Info
+UploadButtonText=Upload
+DeleteButtonText=Delete

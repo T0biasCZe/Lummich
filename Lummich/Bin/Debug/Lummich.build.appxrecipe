@@ -279,8 +279,14 @@
     <AppxPackagedFile Include="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\en.txt">
       <PackagePath>Assets\Language\en.txt</PackagePath>
     </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\MainPage.en.txt">
+      <PackagePath>Assets\Language\MainPage.en.txt</PackagePath>
+    </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\maps.txt">
       <PackagePath>Assets\Language\maps.txt</PackagePath>
+    </AppxPackagedFile>
+    <AppxPackagedFile Include="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\PhotoViewPage.en.txt">
+      <PackagePath>Assets\Language\PhotoViewPage.en.txt</PackagePath>
     </AppxPackagedFile>
     <AppxPackagedFile Include="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\sk.txt">
       <PackagePath>Assets\Language\sk.txt</PackagePath>

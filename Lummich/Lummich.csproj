@@ -152,7 +152,9 @@
     <Content Include="Assets\info.ico" />
     <Content Include="Assets\Language\cs.txt" />
     <Content Include="Assets\Language\en.txt" />
+    <Content Include="Assets\Language\MainPage.en.txt" />
     <Content Include="Assets\Language\maps.txt" />
+    <Content Include="Assets\Language\PhotoViewPage.en.txt" />
     <Content Include="Assets\Language\sk.txt" />
     <Content Include="Assets\network.ico" />
     <Content Include="Assets\PanoramaBackgroundCloudDarkScaled.jpg" />

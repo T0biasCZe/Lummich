@@ -14,7 +14,9 @@
     <File>Assets\info.ico</File>
     <File>Assets\Language\cs.txt</File>
     <File>Assets\Language\en.txt</File>
+    <File>Assets\Language\MainPage.en.txt</File>
     <File>Assets\Language\maps.txt</File>
+    <File>Assets\Language\PhotoViewPage.en.txt</File>
     <File>Assets\Language\sk.txt</File>
     <File>Assets\network.ico</File>
     <File>Assets\PanoramaBackgroundCloudDarkScaled.jpg</File>

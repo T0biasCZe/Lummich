@@ -20,6 +20,7 @@ using System.Diagnostics;
 using Microsoft.Phone.Info;
 using System.Windows.Threading;
 using System.Windows.Input;
+using Lummich.Layouts;
 
 namespace Lummich {
 	public partial class MainPage : PhoneApplicationPage {
@@ -111,6 +112,9 @@ namespace Lummich {
             else {
                 Debug.WriteLine("ICP null");
             }
+
+            uploadedIndicator =  new BitmapImage(new Uri("/Assets/yes.png", UriKind.Relative));
+            notUploadedIndicator = new BitmapImage(new Uri("/Assets/no.png", UriKind.Relative));
             System.Diagnostics.Debug.WriteLine("MainPage constructor done");
         }
 
@@ -170,7 +174,8 @@ namespace Lummich {
         private async void MainPage_Loaded(object sender, RoutedEventArgs e) {
 
             System.Diagnostics.Debug.WriteLine("Main page loaded");
-
+            
+            LangHelper.TranslatePage(this, "MainPage");
 
             System.Diagnostics.Debug.WriteLine("Starting async scan");
 
@@ -255,7 +260,7 @@ namespace Lummich {
 
         private void Scroll_ManipulationCompleted(object sender, ManipulationCompletedEventArgs e) {
             Debug.WriteLine("Manipulation completed");
-            _rescanTimer.Stop();
+            if(_rescanTimer != null) _rescanTimer.Stop();
         }
 
         private async void RescanTimer_Tick(object sender, EventArgs e) {
@@ -796,7 +801,8 @@ namespace Lummich {
 			};
 
 			var status = new Image {
-				Source = new BitmapImage(new Uri(photo.IsUploaded ? "/Assets/yes.png" : "/Assets/no.png", UriKind.Relative)),
+				//Source = new BitmapImage(new Uri(photo.IsUploaded ? "/Assets/;" : "/Assets/no.png", UriKind.Relative)),
+                Source = photo.IsUploaded ? uploadedIndicator : notUploadedIndicator,
 				Width = 24,
 				Height = 24,
 				HorizontalAlignment = HorizontalAlignment.Right,
@@ -837,6 +843,9 @@ namespace Lummich {
 
 			targetGrid.Children.Add(cell);
 		}
+
+        BitmapImage uploadedIndicator;
+        BitmapImage notUploadedIndicator;
         /// <summary>
         /// Najde Grid s daným PhotoItem a aktualizuje IsUploaded indikátor (status image).
         /// </summary>
@@ -851,8 +860,10 @@ namespace Lummich {
 					foreach (var child in cell.Children) {
 						var statusImg = child as Image;
 						if (statusImg != null && statusImg.Tag != null && statusImg.Tag.ToString() == "status") {
-							statusImg.Source = new BitmapImage(new Uri(updatedPhoto.IsUploaded ? "/Assets/yes.png" : "/Assets/no.png", UriKind.Relative));
-							break;
+                            //statusImg.Source = new BitmapImage(new Uri(updatedPhoto.IsUploaded ? "/Assets/yes.png" : "/Assets/no.png", UriKind.Relative));
+                            statusImg.Source = updatedPhoto.IsUploaded ? uploadedIndicator : notUploadedIndicator;
+
+                            break;
 						}
 					}
 					break;
@@ -991,5 +1002,81 @@ namespace Lummich {
             Debug.WriteLine("Refresh button click");
             await RescanPhotos();
         }
+
+        private async void ButtonRefreshStats_Click(object sender, RoutedEventArgs e) {
+            await ImmichServerStats.RefreshStats();
+
+            int localVideos = 0;
+            int localPhotos = 0;
+            ulong FileSizeTotal = 0;
+            PhotoItem.GetNumberOfMedia(AppState.Photos, out localPhotos, out localVideos, out FileSizeTotal);
+
+            LocalPhotosCount.Text = localPhotos.ToString();
+            LocalVideosCount.Text = localVideos.ToString();
+
+            LocalDataSize.Text = PhotoViewPage.FormatSize((long)FileSizeTotal);
+
+            UploadedCount.Text = ImmichServerStats.MediaSentToServerCount.ToString();
+            ServerDataSize.Text = $"{PhotoViewPage.FormatSize((long)ImmichServerStats.DiskUsage)} / {PhotoViewPage.FormatSize((long)ImmichServerStats.DiskCapacity)}";
+
+
+
+        }
+
+        private void StartButton_Click(object sender, RoutedEventArgs e) {
+			// Spustit hromadný upload s detailním callbackem
+			if (AppState.Photos == null || AppState.Photos.Count == 0) {
+				MessageBox.Show("Nejsou načteny žádné fotky.");
+				return;
+			}
+
+			// Nastavit endpoint do UI
+			CurrentEndpointText.Text = ImmichApi.GetServerIP();
+
+			// Reset UI
+			CurrentFileText.Text = "-";
+			CurrentFileProgressText.Text = "-";
+			CurrentFileProgress.Value = 0; CurrentFileProgress.Maximum = 100;
+			FilesRemainingText.Text = "-";
+			TotalProgressText.Text = "-";
+			TotalProgress.Value = 0; TotalProgress.Maximum = 100;
+
+			// Spustit upload na pozadí
+			Task.Run(async () => {
+				await ImmichApi.BulkUploadAsync(AppState.Photos, (sessionUploadCount, alreadyUploadedCount, currentFile, currentFileUploaded, currentFileSize, sessionUploadedBytes, sessionTotalBytes) => {
+					Dispatcher.BeginInvoke(() => {
+						// 1) Kolik fotek se uploaduje v této session
+						// 2) Kolik už bylo nahráno
+						// 3) Aktuální soubor
+						// 4) Kolik bytů aktuálního souboru nahráno
+						// 5) Velikost aktuálního souboru
+						// 6) Kolik bytů celkem nahráno v session
+						// 7) Kolik bytů mají všechny soubory celkem
+
+						// Aktuální soubor
+						CurrentFileText.Text = currentFile ?? "-";
+
+						// Průběh aktuálního souboru
+						double percentFile = currentFileSize > 0 ? (double)currentFileUploaded / currentFileSize * 100.0 : 0;
+						CurrentFileProgress.Maximum = 100;
+						CurrentFileProgress.Value = percentFile;
+						string uploadedStr = PhotoViewPage.FormatSize((long)currentFileUploaded);
+						string totalStr = PhotoViewPage.FormatSize((long)currentFileSize);
+						CurrentFileProgressText.Text = $"{percentFile:F1}% {uploadedStr} / {totalStr}";
+
+						// Celkový průběh
+						int filesDone = alreadyUploadedCount + (sessionUploadedBytes > 0 && currentFileUploaded == currentFileSize ? 1 : 0);
+						FilesRemainingText.Text = $"{filesDone} / {sessionUploadCount + alreadyUploadedCount}";
+
+						double percentTotal = sessionTotalBytes > 0 ? (double)sessionUploadedBytes / sessionTotalBytes * 100.0 : 0;
+						TotalProgress.Maximum = 100;
+						TotalProgress.Value = percentTotal;
+						string uploadedTotalStr = PhotoViewPage.FormatSize((long)sessionUploadedBytes);
+						string totalTotalStr = PhotoViewPage.FormatSize((long)sessionTotalBytes);
+						TotalProgressText.Text = $"{percentTotal:F1}% {uploadedTotalStr} / {totalTotalStr}";
+					});
+				});
+			});
+		}
     }
 }

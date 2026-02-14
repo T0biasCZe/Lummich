@@ -12,7 +12,7 @@
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
 
-        <phone:Panorama Title="Lummich">
+        <phone:Panorama Title="lummich">
 
             <phone:Panorama.Background>
                 <ImageBrush ImageSource="/Assets/PanoramaBackgroundCloudDarkScaled.jpg"/>
@@ -21,13 +21,13 @@
             <!-- ========================= -->
             <!--        PHOTO ROLL         -->
             <!-- ========================= -->
-            <phone:PanoramaItem Header="Fotky">
-                <Grid>
+            <phone:PanoramaItem Header="fotky" x:Name="PhotosPanoramaItem">
+                <Grid  Margin="0,-40,0,0">
                     <TextBlock Text="Nebyly nalezeny žádné média. Ujistěte se že v nastavení aplikace máte přidané složky ke skenování."
                            TextWrapping="Wrap"
                            x:Name="NoMediaText"
                            Visibility="Collapsed" FontSize="24" Padding="10, 10, 10, 10"/>
-                    <Button x:Name="RefreshButton" Visibility="Collapsed" Width="200" Height="100" VerticalAlignment="Top" Padding="10,5,10,6" Margin="0,100,0,0" FontFamily="Portable User Interface" Click="RefreshButton_Click">Refresh</Button>
+                    <Button x:Name="RefreshButton" Visibility="Collapsed" Width="200" Height="100" VerticalAlignment="Top" Padding="10,5,10,6" Margin="0,100,0,0" FontFamily="Portable User Interface" Click="RefreshButton_Click">obnovit</Button>
                     <ScrollViewer x:Name="PhotoScroll" Margin="-2,0,-24,0">
                         <StackPanel x:Name="PhotoSectionsPanel"
                                     ManipulationStarted="Scroll_ManipulationStarted"
@@ -46,36 +46,27 @@
             <!-- ========================= -->
             <!--         UPLOADER          -->
             <!-- ========================= -->
-            <phone:PanoramaItem Header="Nahrávání">
-                <ScrollViewer>
-                    <StackPanel Margin="24,0,24,24">
+            <phone:PanoramaItem Header="nahrávání" x:Name="UploadPanoramaItem">
+                <ScrollViewer Margin="0,-40,0,0">
+                    <StackPanel Margin="0">
 
-                        <TextBlock Text="Uploader" 
-                                   Style="{StaticResource PhoneTextLargeStyle}" />
+                        <TextBlock Text="aktuální endpoint:" Margin="0,10,0,0"  FontSize="25" x:Name="CurrentEndpointLabel"/>
+                        <TextBlock Text="http://photos.example.com" x:Name="CurrentEndpointText" FontSize="15"/>
 
-                        <TextBlock Text="Soubory zbývá:" Margin="0,24,0,0"/>
-                        <TextBlock Text="0 / 0" x:Name="FilesRemainingText"/>
-
-                        <TextBlock Text="MB zbývá:" Margin="0,24,0,0"/>
-                        <TextBlock Text="0 MB" x:Name="MbRemainingText"/>
-
-                        <TextBlock Text="Aktuální endpoint:" Margin="0,24,0,0"/>
-                        <TextBlock Text="http://example" x:Name="CurrentEndpointText"/>
-
-                        <TextBlock Text="Aktuální soubor:" Margin="0,24,0,0"/>
-                        <TextBlock Text="file.jpg" x:Name="CurrentFileText"/>
-
-                        <TextBlock Text="Průběh aktuálního souboru:" Margin="0,24,0,0"/>
+                        <TextBlock Text="aktuální soubor:" Margin="0,10,0,0"  FontSize="24" x:Name="CurrentFileLabel"/>
+                        <TextBlock Text="Camera Roll/WP_20260203_18_23_22_Pro__highres.jpg " x:Name="CurrentFileText" FontSize="15"/>
+                        <TextBlock Text="MB zbývá:" FontSize="18" x:Name="CurrentFileMbRemainingLabel"/>
+                        <TextBlock Text="0% 0.00KiB / 0.00MiB" x:Name="CurrentFileProgressText" FontSize="15"/>
                         <ProgressBar x:Name="CurrentFileProgress" Height="20" Minimum="0" Maximum="100"/>
 
-                        <TextBlock Text="Nahráno v této session:" Margin="0,24,0,0"/>
-                        <TextBlock Text="0 / 0" x:Name="SessionCountText"/>
-
-                        <TextBlock Text="Celkový průběh:" Margin="0,24,0,0"/>
+                        <TextBlock Text="celkový průběh:" Margin="0,10,0,0" FontSize="24" x:Name="TotalProgressLabel"/>
+                        <TextBlock Text="soubory zbývá:" FontSize="18" x:Name="FilesRemainingLabel"/>
+                        <TextBlock Text="0 / 0" x:Name="FilesRemainingText" FontSize="15"/>
+                        <TextBlock Text="MB zbývá:" FontSize="18" x:Name="TotalMbRemainingLabel"/>
+                        <TextBlock Text="0% 0.00KiB / 0.00MiB" x:Name="TotalProgressText" FontSize="15"/>
                         <ProgressBar x:Name="TotalProgress" Height="20" Minimum="0" Maximum="100"/>
 
-                        <Button Content="Start" Margin="0,36,0,0" x:Name="StartButton"/>
-                        <Button Content="Stop" Margin="0,12,0,0" x:Name="StopButton"/>
+                        <Button Content="spustit" Margin="0,36,0,0" x:Name="StartButton" FontFamily="Portable User Interface" Click="StartButton_Click"/>
 
                     </StackPanel>
                 </ScrollViewer>
@@ -84,30 +75,27 @@
             <!-- ========================= -->
             <!--           STATS           -->
             <!-- ========================= -->
-            <phone:PanoramaItem Header="Statistiky">
-                <ScrollViewer>
+            <phone:PanoramaItem Header="statistiky" x:Name="StatsPanoramaItem">
+                <ScrollViewer  Margin="0,-40,0,0">
                     <StackPanel Margin="24,0,24,24">
 
-                        <TextBlock Text="Statistiky"
-                                   Style="{StaticResource PhoneTextLargeStyle}" />
+                        <TextBlock Text="statistiky"
+                                   Style="{StaticResource PhoneTextLargeStyle}" x:Name="StatisticsTitle" />
 
-                        <TextBlock Text="Obrázky v telefonu:" Margin="0,24,0,0"/>
+                        <TextBlock Text="obrázky v telefonu:" Margin="0,24,0,0" x:Name="LocalPhotosLabel"/>
                         <TextBlock Text="0" x:Name="LocalPhotosCount"/>
 
-                        <TextBlock Text="Videa v telefonu:" Margin="0,24,0,0"/>
+                        <TextBlock Text="videa v telefonu:" Margin="0,24,0,0" x:Name="LocalVideosLabel"/>
                         <TextBlock Text="0" x:Name="LocalVideosCount"/>
 
-                        <TextBlock Text="Nahráno na server:" Margin="0,24,0,0"/>
+                        <TextBlock Text="nahráno na server:" Margin="0,24,0,0" x:Name="UploadedToServerLabel"/>
                         <TextBlock Text="0" x:Name="UploadedCount"/>
 
-                        <TextBlock Text="Celková velikost dat v telefonu:" Margin="0,24,0,0"/>
+                        <TextBlock Text="celková velikost dat v telefonu:" Margin="0,24,0,0" x:Name="TotalLocalDataSizeLabel"/>
                         <TextBlock Text="0 MB" x:Name="LocalDataSize"/>
-
-                        <TextBlock Text="Data na serveru:" Margin="0,24,0,0"/>
+                        
+                        <TextBlock Text="využití disku serveru:" Margin="0,24,0,0" x:Name="ServerDiskUsageLabel"/>
                         <TextBlock Text="0 GiB" x:Name="ServerDataSize"/>
-
-                        <TextBlock Text="Volné místo na serveru:" Margin="0,24,0,0"/>
-                        <TextBlock Text="0 GiB" x:Name="ServerFreeSpace"/>
 
                     </StackPanel>
                 </ScrollViewer>
@@ -116,60 +104,60 @@
             <!-- ========================= -->
             <!--         SETTINGS          -->
             <!-- ========================= -->
-            <phone:PanoramaItem Header="Nastavení">
+            <phone:PanoramaItem Header="nastavení" x:Name="SettingsPanoramaItem">
 
-                <phone:Pivot Margin="0,-30,-30,0">
+                <phone:Pivot Margin="0,-60,-30,0">
 
                         <!-- LOGIN -->
-                        <phone:PivotItem Header="Přihlášení">
+                        <phone:PivotItem Header="přihlášení" x:Name="LoginPivotItem" Margin="12,12,12,0">
                             <StackPanel Margin="24,0,24,0">
-                                <TextBlock Text="Email" FontSize="24"/>
+                                <TextBlock Text="email" FontSize="24" x:Name="EmailLabel"/>
                                 <TextBox x:Name="EmailBox" />
 
-                                <TextBlock Text="Heslo" Margin="0" FontSize="24"/>
+                                <TextBlock Text="heslo" Margin="0" FontSize="24" x:Name="PasswordLabel"/>
                                 <Grid>
                                     <PasswordBox x:Name="PasswordBox" Width="400" />
                                     <TextBox x:Name="PasswordTextBox" Width="400" Visibility="Collapsed" />
                                 </Grid>
-                                <CheckBox x:Name="ShowPasswordCheckBox" Content="Zobrazit heslo" Margin="0,-8,0,0" Checked="ShowPasswordCheckBox_Checked" Unchecked="ShowPasswordCheckBox_Unchecked" FontFamily="Portable User Interface" />
-                                <Button Content="Otestovat připojení" Width="160" Margin="0,24,0,0" Click="NetTest_Click"/>
+                                <CheckBox x:Name="ShowPasswordCheckBox" Content="zobrazit heslo" Margin="0,-8,0,0" Checked="ShowPasswordCheckBox_Checked" Unchecked="ShowPasswordCheckBox_Unchecked" FontFamily="Portable User Interface" />
+                                <Button Content="otestovat připojení" Width="160" Margin="0,24,0,0" Click="NetTest_Click" x:Name="TestConnectionButton"/>
                             </StackPanel>
                         </phone:PivotItem>
 
                         <!-- SERVERS -->
-                        <phone:PivotItem Header="Servery">
+                    <phone:PivotItem Header="servery" x:Name="ServersPivotItem" Margin="12,12,12,0">
                             <ScrollViewer VerticalScrollBarVisibility="Auto">
                                 <StackPanel Margin="24,0,24,0" x:Name="ServerSettingsPanel">
-                                    <TextBlock Text="Chytré Wi-Fi připojení"
-                                               Style="{StaticResource PhoneTextLargeStyle}" Margin="0,0,-12,0" />
+                                    <TextBlock Text="chytré Wi-Fi připojení"
+                                               Style="{StaticResource PhoneTextLargeStyle}" Margin="0,0,-12,0" x:Name="SmartWifiTitle" />
 
-                                    <TextBlock Text="Internetová adresa serveru:" Margin="0,10,0,0" FontSize="24"/>
+                                    <TextBlock Text="internetová adresa serveru:" Margin="0,10,0,0" FontSize="24" x:Name="PublicServerAddressLabel"/>
                                     <TextBox x:Name="GlobalDomainBox" Width="400" Margin="0,4,0,0"/>
 
-                                    <TextBlock Text="Lokální IP adresa serveru:" Margin="0,10,0,0" FontSize="24"/>
+                                    <TextBlock Text="lokální IP adresa serveru:" Margin="0,10,0,0" FontSize="24" x:Name="LocalServerIpLabel"/>
                                     <TextBox x:Name="LocalIpBox" Width="400" Margin="0,4,0,0"/>
 
-                                    <TextBlock Text="SSID pro lokální připojení:" Margin="0,10,0,0" FontSize="24"/>
+                                    <TextBlock Text="SSID pro lokální připojení:" Margin="0,10,0,0" FontSize="24" x:Name="LocalSsidLabel"/>
                                     <StackPanel Orientation="Vertical" x:Name="SSIDListPanel">
                                         <!-- Dynamicky generované inputy pro SSID -->
                                     </StackPanel>
-                                    <Button Content="Přidat SSID" x:Name="AddSSIDButton" Width="180" Margin="0,8,0,0" Click="AddSSIDButton_Click"/>
-                                    <CheckBox x:Name="IgnoreSslErrorsCheckBox" Content="Povolit neplatný SSL" Margin="0,24,0,0" FontFamily="Portable User Interface"/>
+                                    <Button Content="přidat SSID" x:Name="AddSSIDButton" Width="180" Margin="0,8,0,0" Click="AddSSIDButton_Click"/>
+                                    <CheckBox x:Name="IgnoreSslErrorsCheckBox" Content="povolit neplatný SSL" Margin="0,24,0,0" FontFamily="Portable User Interface"/>
 
-                                    <Button Content="Uložit" x:Name="SaveServerSettingsButton" Width="160" Margin="0,24,0,0" Click="SaveServerSettingsButton_Click" Visibility="Collapsed"/>
+                                    <Button Content="uložit" x:Name="SaveServerSettingsButton" Width="160" Margin="0,24,0,0" Click="SaveServerSettingsButton_Click" Visibility="Collapsed"/>
                                 </StackPanel>
                             </ScrollViewer>
                         </phone:PivotItem>
 
                         <!-- DIRECTORIES -->
-                        <phone:PivotItem Header="Adresáře">
+                    <phone:PivotItem Header="adresáře" x:Name="DirectoriesPivotItem" Margin="12,40,12,0">
                             <Grid Margin="24,0,24,0">
 
                                 <Grid Margin="0,-34,0,0">
                                     <!-- Folder List Panel -->
                                 <StackPanel x:Name="FolderListPanel" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Visible">
-                                        <TextBlock Text="Složky ke skenování"
-                                                   Style="{StaticResource PhoneTextLargeStyle}" />
+                                        <TextBlock Text="složky ke skenování"
+                                                   Style="{StaticResource PhoneTextLargeStyle}" x:Name="FoldersToScanTitle" />
                                         <ListBox x:Name="FolderList" Margin="0,20,0,0">
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate>
@@ -182,15 +170,15 @@
                                                 </DataTemplate>
                                             </ListBox.ItemTemplate>
                                         </ListBox>
-                                        <Button Content="Přidat složku"
+                                        <Button Content="přidat složku"
                                                 Margin="0,24,0,0"
-                                                Click="AddFolder_Click"/>
+                                                Click="AddFolder_Click" x:Name="AddFolderButton"/>
                                     </StackPanel>
                                     <!-- Folder Picker Panel -->
                                     <StackPanel x:Name="FolderPickerPanel" HorizontalAlignment="Stretch" VerticalAlignment="Top" Visibility="Collapsed">
-                                        <TextBlock Text="Vyberte složky"
+                                        <TextBlock Text="vyberte složky"
                                                    FontSize="32"
-                                                   Margin="0,0,0,20"/>
+                                                   Margin="0,0,0,20" x:Name="SelectFoldersTitle"/>
                                         <ListBox x:Name="FolderPickerList" MaxHeight="250">
                                             <ListBox.ItemTemplate>
                                                 <DataTemplate>
@@ -199,8 +187,8 @@
                                             </ListBox.ItemTemplate>
                                         </ListBox>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,20,0,0">
-                                            <Button Content="Zrušit" Margin="0,0,20,0" Click="CancelFolderPicker_Click"/>
-                                            <Button Content="OK" Click="ConfirmFolderPicker_Click"/>
+                                            <Button Content="zrušit" Margin="0,0,20,0" Click="CancelFolderPicker_Click" x:Name="CancelButton"/>
+                                            <Button Content="OK" Click="ConfirmFolderPicker_Click" x:Name="OkButton"/>
                                         </StackPanel>
                                     </StackPanel>
                                 </Grid>
@@ -210,9 +198,9 @@
 
 
                         <!-- MORE -->
-                        <phone:PivotItem Header="Jiné">
+                        <phone:PivotItem Header="jiné" x:Name="OtherPivotItem" Margin="12,12,12,0">
                             <StackPanel Margin="0,0,0,0">
-                                <TextBlock Text="Počet fotek na řádek (2-6):" Margin="0,0,0,0" FontSize="24"/>
+                                <TextBlock Text="počet fotek na řádek (2-6):" Margin="0,0,0,0" FontSize="24" x:Name="PhotosPerRowLabel"/>
                                 <TextBox x:Name="PhotosPerRowBox" Width="80" Margin="0, -5, 0, 0" Height="65" Text="4" InputScope="Number" TextChanged="PhotosPerRowBox_TextChanged" HorizontalAlignment="Left"/>
                             </StackPanel>
                         </phone:PivotItem>
@@ -245,13 +233,13 @@
             HorizontalAlignment="Stretch"
             Background="#DD002138">
 
-            <TextBlock Text="Testování připojení k serveru..."
+            <TextBlock Text="testování připojení k serveru..."
                        Foreground="White"
                        FontSize="32"
                        TextWrapping="Wrap"
                        TextAlignment="Center"
                        HorizontalAlignment="Stretch"
-                       Margin="0, 15, 0, 0"/>
+                       Margin="0, 15, 0, 0" x:Name="NetworkTestTitleText"/>
             <TextBlock x:Name="NetworkTestResultText"
                        Foreground="White"
                        FontSize="20"
@@ -259,7 +247,7 @@
                        TextAlignment="Left"
                        Margin="0,12,0,0"
                        HorizontalAlignment="Stretch"/>
-            <Button x:Name="CloseTestOverlayButton"  Content="Zavřít"
+            <Button x:Name="CloseTestOverlayButton"  Content="zavřít"
                     Width="160"
                     Margin="0,24,0,0"
                     Click="CloseNetworkTestOverlay_Click"/>
