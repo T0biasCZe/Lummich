@@ -5,6 +5,8 @@
 * One click upload all files to Immich
 * Local vs Internet server address switching based on current Wi-Fi SSID
   * Supports multiple SSID names at once, useful for larger homes
+* Automatic High Res photo deduplication
+  * When camera saves 5MPx and 40MPx (_highres) photo, the app will automatically upload only the 40MPx one
 * Manual per-file upload
 * Works over bad 2G Edge connection
 * Allows unsigned HTTPS certificate
