@@ -14,7 +14,7 @@ public static class LangHelper {
     private static Dictionary<string, Dictionary<string, string>> _langCache = new Dictionary<string, Dictionary<string, string>>();
     private static string[] fallbackOrder = null;
 
-    private static string overwriteLang = "en";
+    private static string overwriteLang = null;
 
 
     static LangHelper() {
@@ -96,8 +96,6 @@ public static class LangHelper {
     public static void TranslatePage(PhoneApplicationPage page, string pageName) {
         if (page == null || string.IsNullOrEmpty(pageName)) return;
 
-        var sw = Stopwatch.StartNew();
-
         // čeština je hardcoded v XAML
         if (fallbackOrder.Length > 0 && fallbackOrder[0] == "cs") {
             Debug.WriteLine($"[LANG] Skipping translation for {pageName} - Czech is the default language in XAML");
@@ -117,9 +115,6 @@ public static class LangHelper {
 
         // Projít vizuální strom a přeložit všechny elementy
         TranslateVisualTree(page, translations);
-        
-        sw.Stop();
-        Debug.WriteLine($"[LANG] Finished translating page: {pageName} (took {sw.ElapsedMilliseconds}ms)");
     }
 
     private static Dictionary<string, string> LoadPageTranslations(string pageName) {
