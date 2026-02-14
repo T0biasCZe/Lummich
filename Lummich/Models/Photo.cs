@@ -32,6 +32,14 @@ namespace Lummich.Models {
         public string FullPathHR { get; set; }
         public string ThumbPath { get; set; }
 
+        public ulong SizeBytes { get; set; } = 0;
+        public ulong SizeBytesHR { get; set; } = 0;
+        public ulong SizeBytesTotal {
+            get {
+                return SizeBytes + SizeBytesHR;
+            }
+        }
+
         public int Width { get; set; }
         public int Height { get; set; }
 
@@ -42,6 +50,11 @@ namespace Lummich.Models {
         
         public bool IsUploaded { get; set; } = false;
 
+        public static void GetNumberOfMedia(List<PhotoItem> items, out int photoCount, out int videoCount, out ulong fileSizeTotal) {
+            photoCount = items.Count(i => i.Type == MediaType.Photo);
+            videoCount = items.Count(i => i.Type == MediaType.Video);
+            fileSizeTotal = (ulong)items.Sum(i => (long)i.SizeBytesTotal);
+        }
     }
 
     // ============================================================
@@ -269,14 +282,23 @@ namespace Lummich.Models {
                     // Compute hashId only once if not already in scannedIds
                     string hashId = PhotoCache.ComputeSHA256(chosen.Path);
                     PhotoItem existing = scannedList.FirstOrDefault(p => p.Id == hashId);
+
                     if (existing != null) {
-                        // Already scanned, just add to result if not present
+                        // Optimalizace: aktualizuj velikosti jen pokud jsou 0
+                        bool updated = false;
+                        if (existing.SizeBytes == 0 && lq != null) {
+                            try { existing.SizeBytes = (await lq.GetBasicPropertiesAsync()).Size; updated = true; } catch { }
+                        }
+                        if (existing.SizeBytesHR == 0 && hr != null) {
+                            try { existing.SizeBytesHR = (await hr.GetBasicPropertiesAsync()).Size; updated = true; } catch { }
+                        }
                         if (!result.Contains(existing)) {
                             result.Add(existing);
                             scannedIds.Add(hashId);
                         }
                         continue;
                     }
+
                     var props = await chosen.Properties.GetImagePropertiesAsync();
                     var localTime = ParseWpTimestamp(chosen, imgProps: props);
                     string thumb = await PhotoCache.GetOrCreateThumbnailAsync(chosen, MediaType.Photo);
@@ -285,6 +307,12 @@ namespace Lummich.Models {
                         thumb = System.IO.Path.Combine("thumbs/24", System.IO.Path.GetFileName(thumb));
                     }
                     string fileHash = await PhotoCache.ComputeFileSHA256Async(chosen);
+
+                    ulong sizeLQ = 0;
+                    ulong sizeHR = 0;
+                    try { if (lq != null) sizeLQ = (await lq.GetBasicPropertiesAsync()).Size; } catch { }
+                    try { if (hr != null) sizeHR = (await hr.GetBasicPropertiesAsync()).Size; } catch { }
+
                     var item = new PhotoItem
                     {
                         Id = hashId,
@@ -296,7 +324,9 @@ namespace Lummich.Models {
                         Width = (int)props.Width,
                         Height = (int)props.Height,
                         DateTaken = localTime,
-                        LengthSeconds = 0
+                        LengthSeconds = 0,
+                        SizeBytes = sizeLQ,
+                        SizeBytesHR = sizeHR
                     };
                     result.Add(item);
                     scannedIds.Add(hashId);
@@ -339,7 +369,9 @@ namespace Lummich.Models {
                         Width = (int)props.Width,
                         Height = (int)props.Height,
                         DateTaken = localTime,
-                        LengthSeconds = (int)props.Duration.TotalSeconds
+                        LengthSeconds = (int)props.Duration.TotalSeconds,
+                        SizeBytes = (await file.GetBasicPropertiesAsync()).Size,
+                        SizeBytesHR = 0
                     };
                     result.Add(item);
                     scannedIds.Add(hashId);

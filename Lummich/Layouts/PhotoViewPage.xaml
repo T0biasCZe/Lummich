@@ -40,7 +40,6 @@
                     <CompositeTransform x:Name="ImageTransform"/>
                 </Image.RenderTransform>
             </Image>
-
         </Grid>
 
 
@@ -64,6 +63,7 @@
                     <Image Source="/Assets/trash.ico" Width="40" Height="40" Opacity="0.4"/>
                 </Button>
                 <TextBlock Text="Smazat"
+                   x:Name="DeleteButtonText"
                    Foreground="White"
                    FontSize="18"
                    HorizontalAlignment="Center"/>
@@ -73,6 +73,7 @@
                     <Image x:Name="UploadButtonImage" Source="/Assets/network.ico" Width="40" Height="40"/>
                 </Button>
                 <TextBlock Text="Nahrát"
+                   x:Name="UploadButtonText"
                    Foreground="White"
                    FontSize="18"
                    HorizontalAlignment="Center"/>
@@ -83,6 +84,7 @@
                     <Image Source="/Assets/info.ico" Width="40" Height="40" Opacity="0.15"/>
                 </Button>
                 <TextBlock Text="Info"
+                   x:Name="InfoButtonText"
                    Foreground="White"
                    FontSize="18"
                    HorizontalAlignment="Center"/>
@@ -92,6 +94,7 @@
                     <Image Source="/Assets/star.ico" Width="40" Height="40" Opacity="0.15"/>
                 </Button>
                 <TextBlock Text="Oblíbené"
+                   x:Name="FavoriteButtonText"
                    Foreground="White"
                    FontSize="18"
                    HorizontalAlignment="Center"/>
@@ -101,14 +104,15 @@
                     <Image Source="/Assets/Human.png" Width="40" Height="40" Opacity="0.15"/>
                 </Button>
                 <TextBlock Text="Sdílet"
+                   x:Name="ShareButtonText"
                    Foreground="White"
                    FontSize="18"
                    HorizontalAlignment="Center"/>
             </StackPanel>
 
         </Grid>
-
-
+        <TextBlock x:Name="UploadProgressText" Visibility="Collapsed" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="12,0,0,100">65% 15.1KiB / 9.25MiB</TextBlock>
+        <ProgressBar x:Name="UploadProgressBar" Visibility="Collapsed" HorizontalAlignment="Stretch" Value="69" Height="10" VerticalAlignment="Bottom" Margin="0,0,0,90"/>
 
     </Grid>
     

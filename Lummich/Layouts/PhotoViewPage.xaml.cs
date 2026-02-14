@@ -260,11 +260,59 @@ namespace Lummich.Layouts {
 
             _isDragging = false;
         }
+        public static string FormatSize(long bytes) {
+            double value = bytes;
+            string unit = "B";
+
+            if (value >= 1024) {
+                value /= 1024;
+                unit = "KiB";
+            }
+            if (value >= 1024) {
+                value /= 1024;
+                unit = "MiB";
+            }
+            if (value >= 1024) {
+                value /= 1024;
+                unit = "GiB";
+            }
+            if (value >= 1024) {
+                value /= 1024;
+                unit = "TiB";
+            }
+
+            // 3 číslice:
+            // 1.21KiB
+            // 12.1KiB
+            // 121KiB
+            if (value < 10) return value.ToString("0.00") + unit;   // 1.23KiB
+            else if (value < 100) return value.ToString("0.0") + unit;    // 12.3KiB
+            else return value.ToString("0") + unit;      // 123KiB
+        }
+
+        private void UpdateUploadUI(long sent, long total) {
+            Deployment.Current.Dispatcher.BeginInvoke(() => {
+                double percent = (total > 0) ? (sent * 100.0 / total) : 0;
+
+                string sentStr = FormatSize(sent);
+                string totalStr = FormatSize(total);
+
+                UploadProgressText.Text = $"{percent:0}%  {sentStr} / {totalStr}";
+
+                UploadProgressBar.Maximum = total;
+                UploadProgressBar.Value = sent;
+            });
+        }
 
         private async void UploadButton_Click(object sender, RoutedEventArgs e) {
             UploadButtonImage.Opacity = 0.25;
             UploadButton.IsEnabled = false;
-            await ImmichApi.UploadPhotoAsync(_photo);
+
+            UploadProgressBar.Value = 0;
+            UploadProgressText.Text = "0% 0.00KiB / 0.00MiB";
+            UploadProgressBar.Visibility = Visibility.Visible;
+            UploadProgressText.Visibility = Visibility.Visible;
+            await ImmichApi.UploadPhotoAsync(_photo, (sent, total) => { UpdateUploadUI(sent, total); });
             await PhotoScanner.SaveScannedListAsync(AppState.Photos);
             if (MainPage._page != null) {
                 MainPage._page.UpdatePhotoIsUploadedIndicator(_photo);
@@ -273,6 +321,12 @@ namespace Lummich.Layouts {
             }
             UploadButtonImage.Opacity = 1;
             UploadButton.IsEnabled = true;
+            UploadProgressBar.Visibility = Visibility.Collapsed;
+            UploadProgressText.Visibility = Visibility.Collapsed;
+        }
+
+        private void PhoneApplicationPage_Loaded(object sender, RoutedEventArgs e) {
+            LangHelper.TranslatePage(this, "PhotoViewPage");
         }
     }
 }

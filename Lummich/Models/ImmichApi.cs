@@ -13,9 +13,76 @@ using System.Diagnostics;
 using System.Windows.Controls;
 using Lummich.Models;
 using System.Text;
+using System.Linq;
+using Windows.Web.Http;
+using Lummich;
 
+public static class ImmichServerStats {
+    // /api/server/storage
+    public static ulong DiskUsage;  //diskUseRaw 
+    public static ulong DiskCapacity; //diskSizeRaw 
+
+    public static int MediaSentToServerCount;
+
+
+    public static async Task RefreshStats() {
+        bool pingOk = false;
+        try { pingOk = await ImmichApi.TestConnectionAsync(); } catch { }
+        if (!pingOk) {
+            Debug.WriteLine("[STATS] Server not reachable (ping failed)");
+        }
+        Debug.WriteLine("[STATS] Server reachable (ping successful)");
+
+        // 2. Check API key
+        if (string.IsNullOrEmpty(ImmichApi._key)) {
+            Debug.WriteLine("[STATS] API key missing, trying login...");
+            string loginResult = await ImmichApi.LoginAsync();
+            if (!loginResult.StartsWith("Success")) {
+                Debug.WriteLine("[STATS] Login failed: " + loginResult);
+            }
+        }
+        Debug.WriteLine("[STATS] API key present");
+
+
+        //obtain number of media already uploaded to server, on endpoint /api/assets/device/{ImmichApi.DeviceId}
+        string url = ImmichApi.GetServerIP() + "/api/assets/device/" + ImmichApi.DeviceId;
+        try {
+            string reply = await HttpHelper.GetAsync(url, ImmichApi._key);
+            if (!String.IsNullOrEmpty(reply)) {
+                //Debug.WriteLine("[STATS] Received stats response:\n" + reply);
+                int quoteCount = 0;
+                foreach (char c in reply)
+                {
+                    if (c == '"') quoteCount++;
+                }
+                MediaSentToServerCount = quoteCount / 2;
+            }
+        } catch (Exception ex) {
+            Debug.WriteLine("Stats error: " + ex.Message);
+        }
+
+        //get storage stats on endpoint /api/server/storage
+        url = ImmichApi.GetServerIP() + "/api/server/storage";
+        try {
+            string reply = await HttpHelper.GetAsync(url, ImmichApi._key);
+            if (!String.IsNullOrEmpty(reply)) {
+                Debug.WriteLine("[STATS] Received storage stats response:\n" + reply);
+                try {
+                    dynamic obj = Newtonsoft.Json.JsonConvert.DeserializeObject(reply);
+                    DiskUsage = (ulong)obj.diskUseRaw;
+                    DiskCapacity = (ulong)obj.diskSizeRaw;
+                    Debug.WriteLine($"[STATS] Disk usage: {DiskUsage} bytes, capacity: {DiskCapacity} bytes");
+                } catch (Exception ex) {
+                    Debug.WriteLine("Stats parsing error: " + ex.Message);
+                }
+            }
+        } catch (Exception ex) {
+            Debug.WriteLine("Stats error: " + ex.Message);
+        }
+    }
+}
 public static class ImmichApi {
-    private static string _key = "";
+    public static string _key = "";
 
     public static string email = "";
     public static string password = "";
@@ -117,6 +184,7 @@ public static class ImmichApi {
         string url = GetServerIP();
         string endpoint = url + "/api/auth/login";
         var json = $"{{\"email\":\"{email}\",\"password\":\"{password}\"}}";
+        Debug.WriteLine("[LOGIN] Trying to login with email " + email);
         try {
             var result = await HttpHelper.PostJsonAsync(endpoint, json);
             if (!string.IsNullOrWhiteSpace(result)) {
@@ -144,32 +212,155 @@ public static class ImmichApi {
         }
         return "Error: No response from server";
     }
-    public static async Task<bool> UploadPhotoAsync(PhotoItem photo) {
-        if (photo == null) return false;
-        Debug.WriteLine("[UPLOAD] Starting upload for photo: " + photo.FullPath);
 
-        // 1. Ping server
+    public static async Task<bool> BulkUploadAsync(List<PhotoItem> photos, Action<int, int, string, ulong, ulong, ulong, ulong> photoProgressCallback = null) {
         bool pingOk = false;
-        try {
-            pingOk = await TestConnectionAsync();
-        }
-        catch { }
+        try { pingOk = await TestConnectionAsync(); } catch { }
         if (!pingOk) {
-            Debug.WriteLine("[UPLOAD] Server not reachable (ping failed)");
+            Debug.WriteLine("[BULK UPLOAD] Server not reachable (ping failed)");
             return false;
         }
-        Debug.WriteLine("[UPLOAD] Server reachable (ping successful)");
+        Debug.WriteLine("[BULK UPLOAD] Server reachable (ping successful)");
 
         // 2. Check API key
         if (string.IsNullOrEmpty(_key)) {
-            Debug.WriteLine("[UPLOAD] API key missing, trying login...");
+            Debug.WriteLine("[BULK UPLOAD] API key missing, trying login...");
             string loginResult = await LoginAsync();
             if (!loginResult.StartsWith("Success")) {
-                Debug.WriteLine("[UPLOAD] Login failed: " + loginResult);
+                Debug.WriteLine("[BULK UPLOAD] Login failed: " + loginResult);
                 return false;
             }
         }
-        Debug.WriteLine("[UPLOAD] API key present");
+
+        Debug.WriteLine("[BULK UPLOAD] Updating upload status for " + photos.Count + " photos...");
+        //update isUploaded flag for all photos. Go through all photos, and if FileHash of the photo is in the list from server, set isUploaded to true, otherwise false.
+        string url = ImmichApi.GetServerIP() + "/api/assets/device/" + ImmichApi.DeviceId; //returns list of hashes, if format ["hash1","hash2",...]
+        var jsonList = new List<string>();
+        try {
+            string reply = await HttpHelper.GetAsync(url, _key);
+            if (!String.IsNullOrEmpty(reply)) {
+                jsonList = Newtonsoft.Json.JsonConvert.DeserializeObject<List<string>>(reply);
+            }
+        } catch (Exception ex) {
+            Debug.WriteLine("[BULK UPLOAD] Bulk upload error: " + ex.Message);
+        }
+        Debug.WriteLine($"[BULK UPLOAD] Received json with {jsonList.Count()} elements");
+        foreach (var photo in photos) {
+            if (jsonList.Contains(photo.FileHash)) {
+                photo.IsUploaded = true;
+            } else {
+                photo.IsUploaded = false;
+            }
+        }
+        Debug.WriteLine("[BULK UPLOAD] Upload status updated for " + photos.Count + " photos. Starting upload...");
+        Debug.WriteLine("[BULK UPLOAD] Starting bulk upload of " + photos.Count + " photos...");
+
+        // Prepare session stats
+        var toUpload = photos.Where(p => !p.IsUploaded).ToList();
+        int sessionUploadCount = toUpload.Count;
+        int alreadyUploadedCount = 0;
+        ulong sessionTotalBytes = 0;
+        foreach (var p in toUpload) {
+            sessionTotalBytes += p.SizeBytesHR > 0 ? p.SizeBytesHR : p.SizeBytes;
+        }
+
+        ulong sessionUploadedBytes = 0;
+
+        for (int i = 0; i < photos.Count; i++) {
+            try {
+                var photo = photos[i];
+                ulong fileSize = photo.SizeBytesHR > 0 ? photo.SizeBytesHR : photo.SizeBytes;
+                string currentFile = photo.FullPathHR ?? photo.FullPath;
+                currentFile = currentFile.Replace("C:\\Users\\Public\\Pictures", "").Replace("C:\\Data\\Users\\Public\\Pictures", "");
+                ulong currentFileUploaded = 0;
+
+                if (photo.IsUploaded) {
+                    Debug.WriteLine($"[BULK UPLOAD] Photo {i + 1}/{photos.Count} already uploaded, skipping: {photo.FullPath}");
+                    // Report progress for skipped file
+                    photoProgressCallback?.Invoke(
+                        sessionUploadCount,
+                        alreadyUploadedCount,
+                        currentFile,
+                        fileSize,
+                        fileSize,
+                        sessionUploadedBytes,
+                        sessionTotalBytes
+                    );
+                    continue;
+                }
+
+                // Progress callback for current file
+                Debug.WriteLine("[BULK UPLOAD] starting uploadphotoasync");
+                bool result = await UploadPhotoAsync(photo, (sent, total) => {
+                    // sent = bytes uploaded for current file
+                    photoProgressCallback?.Invoke(
+                        sessionUploadCount,
+                        alreadyUploadedCount,
+                        currentFile,
+                        (ulong)sent,
+                        fileSize,
+                        sessionUploadedBytes + (ulong)sent,
+                        sessionTotalBytes
+                    );
+                }, true);
+                Debug.WriteLine("[BULK UPLOAD] uploadphotoasync end");
+
+
+                if (result) {
+                    sessionUploadedBytes += fileSize;
+                    Debug.WriteLine($"[BULK UPLOAD] Photo {i + 1}/{photos.Count} uploaded successfully: {photo.FullPath}");
+                }
+                else {
+                    Debug.WriteLine($"[BULK UPLOAD] Photo {i + 1}/{photos.Count} failed to upload: {photo.FullPath}");
+                }
+                alreadyUploadedCount++;
+                // Final callback for file
+                photoProgressCallback?.Invoke(
+                    sessionUploadCount,
+                    alreadyUploadedCount,
+                    currentFile,
+                    fileSize,
+                    fileSize,
+                    sessionUploadedBytes,
+                    sessionTotalBytes
+                );
+                //MainPage._page.UpdatePhotoIsUploadedIndicator(photo);
+                //invoke photoupdateisuploadedindicator on main UI thread
+                System.Windows.Deployment.Current.Dispatcher.BeginInvoke(() => {
+                    MainPage._page.UpdatePhotoIsUploadedIndicator(photo);
+                });
+
+            } catch (Exception ex) {
+                Debug.WriteLine("Error uploading photo\n" + ex.ToString());
+            }
+        }
+        return true;
+    }
+
+    public static async Task<bool> UploadPhotoAsync(PhotoItem photo, Action<long, long> progressCallback = null, bool skipNetworkTest = false) {
+        if (photo == null) return false;
+        Debug.WriteLine("[UPLOAD] Starting upload for photo: " + photo.FullPath);
+        if(skipNetworkTest == false) {
+            // 1. Ping server
+            bool pingOk = false;
+            try { pingOk = await TestConnectionAsync(); } catch { }
+            if (!pingOk) {
+                Debug.WriteLine("[UPLOAD] Server not reachable (ping failed)");
+                return false;
+            }
+            Debug.WriteLine("[UPLOAD] Server reachable (ping successful)");
+
+            // 2. Check API key
+            if (string.IsNullOrEmpty(_key)) {
+                Debug.WriteLine("[UPLOAD] API key missing, trying login...");
+                string loginResult = await LoginAsync();
+                if (!loginResult.StartsWith("Success")) {
+                    Debug.WriteLine("[UPLOAD] Login failed: " + loginResult);
+                    return false;
+                }
+            }
+            Debug.WriteLine("[UPLOAD] API key present");
+        }
 
         // 3. Load file
         string filePath = !string.IsNullOrEmpty(photo.FullPathHR) ? photo.FullPathHR : photo.FullPath;
@@ -179,9 +370,7 @@ public static class ImmichApi {
         }
 
         Windows.Storage.StorageFile file = null;
-        try {
-            file = await Windows.Storage.StorageFile.GetFileFromPathAsync(filePath);
-        }
+        try { file = await Windows.Storage.StorageFile.GetFileFromPathAsync(filePath); }
         catch {
             Debug.WriteLine("[UPLOAD] File not found: " + filePath);
             return false;
@@ -189,7 +378,6 @@ public static class ImmichApi {
 
         string url = GetServerIP() + "/api/assets";
         string key = _key;
-        string slug = photo.FileHash;
 
         // 4. Build multipart manually
         var boundary = "----ImmichBoundary" + DateTime.Now.Ticks;
@@ -255,45 +443,60 @@ public static class ImmichApi {
 
         Debug.WriteLine("[UPLOAD] Prepared multipart content, size: " + ms.Length + " bytes");
 
-        // 5. SEND USING WINRT HTTPCLIENT
-        var client = new Windows.Web.Http.HttpClient();
+        long totalBytes = ms.Length;
 
-        // Authorization header
+        // 5. SEND USING WINRT HTTPCLIENT WITH PROGRESS
+        var filter = new Windows.Web.Http.Filters.HttpBaseProtocolFilter();
+        var client = new Windows.Web.Http.HttpClient(filter);
+
         client.DefaultRequestHeaders.Authorization =
             new Windows.Web.Http.Headers.HttpCredentialsHeaderValue("Bearer", key);
 
-        // Convert MemoryStream to IBuffer
-        var buffer = ms.ToArray().AsBuffer();
-        var content = new Windows.Web.Http.HttpBufferContent(buffer);
+        var request = new Windows.Web.Http.HttpRequestMessage(
+            Windows.Web.Http.HttpMethod.Post,
+            new Uri(url)
+        );
 
-        // Set Content-Type with boundary
-        content.Headers.ContentType =
+        var streamContent = new Windows.Web.Http.HttpStreamContent(ms.AsInputStream());
+        streamContent.Headers.ContentType =
             new Windows.Web.Http.Headers.HttpMediaTypeHeaderValue("multipart/form-data");
-        content.Headers.ContentType.Parameters.Add(
+        streamContent.Headers.ContentType.Parameters.Add(
             new Windows.Web.Http.Headers.HttpNameValueHeaderValue("boundary", boundary)
         );
+
+        request.Content = streamContent;
 
         Debug.WriteLine("[UPLOAD] Sending upload request via WinRT HttpClient...");
 
         Windows.Web.Http.HttpResponseMessage response = null;
 
         try {
-            //response = await client.PostAsync(new Uri(url + "?slug=" + Uri.EscapeDataString(slug)), content);
-            response = await client.PostAsync(new Uri(url), content);
+            var task = client.SendRequestAsync(request).AsTask(
+                new Progress<HttpProgress>((p) => {
+                    long sent = (long)p.BytesSent;
+                    progressCallback?.Invoke(sent, totalBytes);
+                    //Debug.WriteLine($"[UPLOAD PROGRESS] {sent}/{totalBytes} bytes");
+                })
+            );
+
+            response = await task;
         }
         catch (Exception ex) {
             Debug.WriteLine("[UPLOAD ERROR] Exception during POST: " + ex);
             return false;
         }
+        Debug.WriteLine("[UPLOAD] Request sent");
 
         string respText = await response.Content.ReadAsStringAsync();
         Debug.WriteLine("[UPLOAD RESPONSE] " + respText);
 
-        if (respText.Contains("\"status\":\"created\"") || respText.Contains("\"status\":\"duplicate\"") || respText.Contains("\"status\":\"replaced\"")) {
+        if (respText.Contains("\"status\":\"created\"") ||
+            respText.Contains("\"status\":\"duplicate\"") ||
+            respText.Contains("\"status\":\"replaced\"")) {
             photo.IsUploaded = true;
+            Debug.WriteLine("[UPLOAD] Upload successful");
             return true;
         }
-
 
         Debug.WriteLine("[UPLOAD] Upload failed, status: " + response.StatusCode);
         return false;
