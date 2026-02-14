@@ -34,7 +34,8 @@ Then either create a github pull request, or create an issue and send me the txt
 
 ## Screenshots
 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-  <img src="./screenshots/wp_ss_20260214_0003.png" alt="Main page" title="Main page" style="width: 30%; min-width: 250px; object-fit: contain;">
-  <img src="./screenshots/wp_ss_20260214_0004.png" alt="Photo view" title="Photo view" style="width: 30%; min-width: 250px; object-fit: contain;">
+  <img src="./screenshots/wp_ss_20260214_0004.png" alt="Main page" title="Main page" style="width: 30%; min-width: 250px; object-fit: contain;">
   <img src="./screenshots/wp_ss_20260214_0005.png" alt="Uploader" title="Uploader" style="width: 30%; min-width: 250px; object-fit: contain;">
+  <img src="./screenshots/wp_ss_20260214_0003.png" alt="Photo view" title="Photo view" style="width: 30%; min-width: 250px; object-fit: contain;">
+
 </div>
