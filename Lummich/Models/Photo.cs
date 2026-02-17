@@ -445,7 +445,7 @@ namespace Lummich.Models {
 
         private static bool IsImage(string ext) {
             ext = ext.ToLower();
-            return ext == ".jpg" || ext == ".jpeg" || ext == ".png";
+            return ext == ".jpg" || ext == ".jpeg" || ext == ".png" || ext == ".dng";
         }
 
         private static bool IsVideo(string ext) {

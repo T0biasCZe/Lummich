@@ -30,3 +30,6 @@ isAdmin=Administrátor
 yes=Ano
 no=Ne
 profileUrl=Profilová URL
+deleteScanCacheTitle=Vymazat cache skenu
+deleteScanCacheMessage=Tahle operace smaže informace o již naskenovaných fotkách, a budou muset být vytvořeny znovu. Opravdu chceš pokračovat?
+deleteScanCacheDone=Cache skenu byla úspěšně vymazána.

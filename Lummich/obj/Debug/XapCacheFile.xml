@@ -1,10 +1,10 @@
-﻿<xapCache source="C:\Users\user\source\repos\Lummich\Lummich\Bin\Debug\Lummich_Debug_AnyCPU.xap" wasSigned="False" wasTritonized="False" certificateThumbprint="" TimeStampUrl="" signKeyFile="" signKeyPassword="" lastWriteTime="14/02/2026 22:15:10">
+﻿<xapCache source="C:\Users\user\source\repos\Lummich\Lummich\Bin\Debug\Lummich_Debug_AnyCPU.xap" wasSigned="False" wasTritonized="False" certificateThumbprint="" TimeStampUrl="" signKeyFile="" signKeyPassword="" lastWriteTime="14/02/2026 22:51:17">
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Bin\Debug\resources.pri" archivePath="resources.pri" lastWriteTime="14/02/2026 21:52:33" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\Lummich.dll" archivePath="Lummich.dll" lastWriteTime="14/02/2026 22:15:08" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\cs-CZ\Lummich.resources.dll" archivePath="cs-CZ\Lummich.resources.dll" lastWriteTime="14/02/2026 22:15:08" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\cs\Lummich.resources.dll" archivePath="cs\Lummich.resources.dll" lastWriteTime="14/02/2026 22:15:09" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\sk-SK\Lummich.resources.dll" archivePath="sk-SK\Lummich.resources.dll" lastWriteTime="14/02/2026 22:15:09" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\sk\Lummich.resources.dll" archivePath="sk\Lummich.resources.dll" lastWriteTime="14/02/2026 22:15:09" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\Lummich.dll" archivePath="Lummich.dll" lastWriteTime="14/02/2026 22:51:15" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\cs-CZ\Lummich.resources.dll" archivePath="cs-CZ\Lummich.resources.dll" lastWriteTime="14/02/2026 22:51:15" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\cs\Lummich.resources.dll" archivePath="cs\Lummich.resources.dll" lastWriteTime="14/02/2026 22:51:15" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\sk-SK\Lummich.resources.dll" archivePath="sk-SK\Lummich.resources.dll" lastWriteTime="14/02/2026 22:51:15" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\sk\Lummich.resources.dll" archivePath="sk\Lummich.resources.dll" lastWriteTime="14/02/2026 22:51:15" />
   <file source="C:\Users\user\source\repos\Lummich\packages\WPtoolkit.4.2013.08.16\lib\wp8\cs-CZ\Microsoft.Phone.Controls.Toolkit.resources.dll" archivePath="cs-CZ\Microsoft.Phone.Controls.Toolkit.resources.dll" lastWriteTime="15/08/2013 13:04:32" />
   <file source="C:\Users\user\source\repos\Lummich\packages\WPtoolkit.4.2013.08.16\lib\wp8\sk-SK\Microsoft.Phone.Controls.Toolkit.resources.dll" archivePath="sk-SK\Microsoft.Phone.Controls.Toolkit.resources.dll" lastWriteTime="15/08/2013 13:04:42" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Human.png" archivePath="Assets\Human.png" lastWriteTime="20/05/2024 03:35:44" />
@@ -14,7 +14,7 @@
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\en.txt" archivePath="Assets\Language\en.txt" lastWriteTime="29/01/2026 23:28:26" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\MainPage.en.txt" archivePath="Assets\Language\MainPage.en.txt" lastWriteTime="14/02/2026 22:09:03" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\maps.txt" archivePath="Assets\Language\maps.txt" lastWriteTime="29/01/2026 23:29:12" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\PhotoViewPage.en.txt" archivePath="Assets\Language\PhotoViewPage.en.txt" lastWriteTime="14/02/2026 21:19:36" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\PhotoViewPage.en.txt" archivePath="Assets\Language\PhotoViewPage.en.txt" lastWriteTime="14/02/2026 22:17:53" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\Language\sk.txt" archivePath="Assets\Language\sk.txt" lastWriteTime="29/01/2026 23:27:42" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\network.ico" archivePath="Assets\network.ico" lastWriteTime="28/01/2024 15:03:38" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Assets\PanoramaBackgroundCloudDarkScaled.jpg" archivePath="Assets\PanoramaBackgroundCloudDarkScaled.jpg" lastWriteTime="29/01/2026 23:20:54" />
@@ -59,6 +59,6 @@
   <file source="C:\Users\user\source\repos\Lummich\packages\System.ComponentModel.TypeConverter.4.3.0\lib\netstandard1.0\System.ComponentModel.TypeConverter.dll" archivePath="System.ComponentModel.TypeConverter.dll" lastWriteTime="05/11/2016 04:55:44" />
   <file source="C:\Users\user\source\repos\Lummich\packages\Newtonsoft.Json.13.0.4\lib\netstandard1.0\Newtonsoft.Json.xml" archivePath="Newtonsoft.Json.xml" lastWriteTime="16/09/2025 08:00:56" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Bin\Debug\Properties\WMAppManifest.xml" archivePath="WMAppManifest.xml" lastWriteTime="30/01/2026 01:31:37" />
-  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\MDILProjectFiles.xml" archivePath="MDILProjectFiles.xml" lastWriteTime="14/02/2026 22:15:09" />
+  <file source="C:\Users\user\source\repos\Lummich\Lummich\obj\Debug\MDILProjectFiles.xml" archivePath="MDILProjectFiles.xml" lastWriteTime="14/02/2026 22:51:16" />
   <file source="C:\Users\user\source\repos\Lummich\Lummich\Bin\Debug\AppxManifest.xml" archivePath="AppxManifest.xml" lastWriteTime="14/02/2026 21:52:33" />
 </xapCache>

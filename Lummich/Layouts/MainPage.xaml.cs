@@ -117,6 +117,19 @@ namespace Lummich {
             notUploadedIndicator = new BitmapImage(new Uri("/Assets/no.png", UriKind.Relative));
             System.Diagnostics.Debug.WriteLine("MainPage constructor done");
         }
+		private async void DeleteScanCacheButton_Click(object sender, RoutedEventArgs e) {
+			string title = LangHelper.GetString("deleteScanCacheTitle");
+			string message = LangHelper.GetString("deleteScanCacheMessage");
+			string yes = LangHelper.GetString("yes");
+			string no = LangHelper.GetString("no");
+
+			var result = MessageBox.Show(message, title, MessageBoxButton.OKCancel);
+			if (result == MessageBoxResult.OK) {
+				AppState.Photos = new List<PhotoItem>();
+				await PhotoScanner.SaveScannedListAsync(AppState.Photos);
+				MessageBox.Show(LangHelper.GetString("deleteScanCacheDone"));
+			}
+		}
 
 		private void ShowPasswordCheckBox_Checked(object sender, RoutedEventArgs e)
 		{
